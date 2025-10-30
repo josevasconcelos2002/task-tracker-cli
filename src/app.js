@@ -51,15 +51,15 @@ async function main() {
 
     switch (operationType) {
         case "add":
-            if(args.length != 2) {
+            if (args.length != 2) {
                 console.log("Missing Task <description>!");
                 break;
             }
             addTask(args[1]);
             break;
-        
+
         case "delete":
-            if(args.length != 2){
+            if (args.length != 2) {
                 console.log("Missing Task <id>!");
                 break;
             }
@@ -67,7 +67,7 @@ async function main() {
             break;
 
         case "update":
-            if(args.length != 3){
+            if (args.length != 3) {
                 console.log("Missing Task <id> and <newDescription>!");
                 break;
             }
@@ -76,14 +76,94 @@ async function main() {
             updateTask(id, newDescription);
             break;
 
-        default:
+        case "list":
+            if (args.length == 1)
+                listAllTasks();
+            else if (args.length == 2) {
+                const type = args[1];
+                switch (type) {
+                    case "done":
+                        listDoneTasks();
+                        break;
+
+                    case "todo":
+                        listTodoTasks();
+                        break;
+
+                    case "in-progress":
+                        listInProgressTasks();
+                        break;
+
+                    default:
+                        console.log("Available list options: done | todo | in-progress");
+                        break;
+                }
+
+            }
+            break;
+
+        case "help":
             help();
+            break;
+
+        default:
             break;
 
     }
 
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
     console.log("tasks.json saved!");
+}
+
+
+function listTodoTasks() {
+    if (data.tasks["todo"].length === 0) {
+        console.log("Todo tasks array is empty!");
+        return;
+    }
+    console.log("Todo Tasks")
+    for (const element of data.tasks["todo"]) {
+        if (element) {
+            listTask(element);
+        }
+    }
+}
+
+function listDoneTasks() {
+    if (data.tasks["done"].length === 0) {
+        console.log("Done tasks array is empty!");
+        return;
+    }
+    console.log("Done Tasks")
+    for (const element of data.tasks["done"]) {
+        if (element) {
+            listTask(element);
+        }
+    }
+}
+
+function listInProgressTasks() {
+    if (data.tasks["in-progress"].length === 0) {
+        console.log("In progress tasks array is empty!");
+        return;
+    }
+    console.log("In progress Tasks")
+    for (const element of data.tasks["in-progress"]) {
+        if (element) {
+            listTask(element);
+        }
+    }
+}
+
+function listAllTasks() {
+    console.log("Tasks:");
+    listTodoTasks();
+    listDoneTasks();
+    listInProgressTasks();
+}
+
+function listTask(task) {
+    console.log("\nId: " + task.id + "\nDescription: " + task.description + "\nStatus: " + task.status + "\nCreatedAt: " + task.createdAt + "\nUpdatedAt: " + task.updatedAt + "\n\n");
 }
 
 
@@ -104,31 +184,31 @@ function addTask(description) {
     console.log("Task: " + newObject.id + " -> " + newObject.description + " successfully added!");
 }
 
-function deleteTask(id){
+function deleteTask(id) {
 
-    for(const status of ["todo", "in-progress", "done"]){
+    for (const status of ["todo", "in-progress", "done"]) {
         const previousLength = data.tasks[status].length;
         data.tasks[status] = data.tasks[status].filter((entry) => {
-            if(entry.id != id)
+            if (entry.id != id)
                 return entry;
         });
         const newLength = data.tasks[status].length;
 
-        if(newLength == previousLength){
+        if (newLength == previousLength) {
             console.log("Task " + id + " doesnt exist in " + status);
-        } else{
+        } else {
             console.log("Task " + id + " deleted in " + status);
         }
 
     }
 }
 
-function updateTask(id, newDescription){
-    for(const status of ["todo", "in-progress", "done"]){
+function updateTask(id, newDescription) {
+    for (const status of ["todo", "in-progress", "done"]) {
         data.tasks[status] = data.tasks[status].map((entry) => {
-            if(entry.id === id){
+            if (entry.id === id) {
                 entry = { ...entry, description: newDescription, updatedAt: new Date().toISOString() };
-                console.log("Task " + id + " from " + status +  " description's updated to " + entry.description);
+                console.log("Task " + id + " from " + status + " description's updated to " + entry.description);
             }
             return entry;
         });
