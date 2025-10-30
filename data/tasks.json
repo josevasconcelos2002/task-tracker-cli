@@ -1,14 +1,6 @@
 {
   "tasks": {
-    "todo": [
-      {
-        "id": 1,
-        "description": "Hello World!",
-        "status": "todo",
-        "createdAt": "2025-10-29T18:02:44.884Z",
-        "updatedAt": "2025-10-29T18:02:44.884Z"
-      }
-    ],
+    "todo": [],
     "in-progress": [],
     "done": []
   }
