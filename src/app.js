@@ -65,6 +65,21 @@ async function main() {
             }
             deleteTask(args[1]);
             break;
+
+        case "update":
+            if(args.length != 3){
+                console.log("Missing Task <id> and <newDescription>!");
+                break;
+            }
+            const id = Number(args[1]);
+            const newDescription = args[2];
+            updateTask(id, newDescription);
+            break;
+
+        default:
+            help();
+            break;
+
     }
 
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
@@ -104,6 +119,19 @@ function deleteTask(id){
         } else{
             console.log("Task " + id + " deleted in " + status);
         }
+
+    }
+}
+
+function updateTask(id, newDescription){
+    for(const status of ["todo", "in-progress", "done"]){
+        data.tasks[status] = data.tasks[status].map((entry) => {
+            if(entry.id === id){
+                entry = { ...entry, description: newDescription, updatedAt: new Date().toISOString() };
+                console.log("Task " + id + " from " + status +  " description's updated to " + entry.description);
+            }
+            return entry;
+        });
 
     }
 }
