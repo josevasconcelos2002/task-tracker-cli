@@ -102,6 +102,22 @@ async function main() {
             }
             break;
 
+        case "mark-in-progress":
+            if (args.length != 2) {
+                console.log("Missing Task <id>!");
+                break;
+            }
+            markInProgress(args[1]);
+            break;
+
+        case "mark-done":
+            if (args.length != 2) {
+                console.log("Missing Task <id>!");
+                break;
+            }
+            markDone(args[1]);
+            break;
+
         case "help":
             help();
             break;
@@ -216,6 +232,48 @@ function updateTask(id, newDescription) {
     }
 }
 
+
+function markInProgress(id) {
+    id = Number(id);
+    let taskToMove = null;
+    for (const status of ["todo", "done"]) {
+        const index = data.tasks[status].findIndex(t => t.id === id);
+        if (index !== -1) {
+            taskToMove = { ...data.tasks[status][index] };
+
+            taskToMove.updatedAt = new Date().toISOString();
+            taskToMove.status = "in-progress";
+
+            data.tasks[status].splice(index, 1);
+        }
+    }
+    
+    if(taskToMove)
+        data.tasks["in-progress"].push(taskToMove);
+    else
+        console.log("Task " + id + " couldn't be found.");
+}
+
+function markDone(id) {
+    id = Number(id);
+    let taskToMove = null;
+    for (const status of ["todo", "in-progress"]) {
+        const index = data.tasks[status].findIndex(t => t.id === id);
+        if (index !== -1) {
+            taskToMove = { ...data.tasks[status][index] };
+
+            taskToMove.updatedAt = new Date().toISOString();
+            taskToMove.status = "done";
+
+            data.tasks[status].splice(index, 1);
+        }
+    }
+    
+    if(taskToMove)
+        data.tasks["done"].push(taskToMove);
+    else
+        console.log("Task " + id + " couldn't be found.");
+}
 
 
 function help() {
