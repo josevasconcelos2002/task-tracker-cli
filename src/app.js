@@ -83,15 +83,15 @@ async function main() {
                 const type = args[1];
                 switch (type) {
                     case "done":
-                        listDoneTasks();
+                        listTasksByStatus(type);
                         break;
 
                     case "todo":
-                        listTodoTasks();
+                        listTasksByStatus(type);
                         break;
 
                     case "in-progress":
-                        listInProgressTasks();
+                        listTasksByStatus(type);
                         break;
 
                     default:
@@ -132,50 +132,22 @@ async function main() {
 }
 
 
-function listTodoTasks() {
-    if (data.tasks["todo"].length === 0) {
-        console.log("Todo tasks array is empty!");
-        return;
-    }
-    console.log("Todo Tasks")
-    for (const element of data.tasks["todo"]) {
-        if (element) {
-            listTask(element);
-        }
-    }
-}
 
-function listDoneTasks() {
-    if (data.tasks["done"].length === 0) {
-        console.log("Done tasks array is empty!");
+function listTasksByStatus(status) {
+    const tasks = data.tasks[status];
+    if (!tasks.length) {
+        console.log(`${status} tasks array is empty!`);
         return;
     }
-    console.log("Done Tasks")
-    for (const element of data.tasks["done"]) {
-        if (element) {
-            listTask(element);
-        }
-    }
-}
-
-function listInProgressTasks() {
-    if (data.tasks["in-progress"].length === 0) {
-        console.log("In progress tasks array is empty!");
-        return;
-    }
-    console.log("In progress Tasks")
-    for (const element of data.tasks["in-progress"]) {
-        if (element) {
-            listTask(element);
-        }
-    }
+    console.log(`${status.toUpperCase()} Tasks:`);
+    for (const task of tasks) listTask(task);
 }
 
 function listAllTasks() {
     console.log("Tasks:");
-    listTodoTasks();
-    listDoneTasks();
-    listInProgressTasks();
+    listTasksByStatus("todo");
+    listTasksByStatus("in-progress");
+    listTasksByStatus("done");
 }
 
 function listTask(task) {
